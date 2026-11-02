@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>App sheet</title>
+<link rel="stylesheet" href="sheet.css">
+<link rel="stylesheet" href="../app/app.css">
+<style>
+  html { background: var(--background); color: var(--text); }
+  .stage { display: flex; flex-direction: column; gap: 28px; }
+  .stage .row { display: flex; gap: 28px; align-items: flex-start; }
+  .stage .col { display: flex; flex-direction: column; gap: 20px; }
+  .notes { color: var(--text); background: var(--panel); border-left-color: var(--accent); max-width: 1480px; }
+  html[data-theme] .notes { background: var(--panel); border-left-color: var(--accent); }
+</style>
+</head>
+<body>
+<script src="../data.js"></script>
+<script src="../app/app.js"></script>
+</body>
+</html>

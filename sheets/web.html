@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Web sheet</title>
+<link rel="stylesheet" href="sheet.css">
+</head>
+<body>
+<h1 id="title"></h1>
+<div class="frames">
+  <figure><figcaption>Desktop · 1280 px</figcaption><iframe id="desk" width="1280"></iframe></figure>
+  <figure><figcaption id="pcap">Phone · 390 px</figcaption><iframe id="phone" width="390"></iframe></figure>
+</div>
+<div class="notes" id="notes"></div>
+<script>
+const q = new URLSearchParams(location.search);
+const page = q.get("page") || "home", theme = q.get("theme") || "light";
+document.documentElement.dataset.theme = theme;
+const names = { home: "Home", plugin: "Plugin page", author: "Author page", submit: "Publish a plugin" };
+const num = { home: "W1", plugin: "W2", author: "W3", submit: "W4" }[page];
+document.getElementById("title").textContent = `${num} · ${names[page]} · ${theme === "dark" ? "Dark" : "Light"}`;
+const extra = q.get("phone") || "";
+if (extra) document.getElementById("pcap").textContent = "Phone · 390 px · " + decodeURIComponent(q.get("pcap") || "");
+const desk = document.getElementById("desk"), phone = document.getElementById("phone");
+desk.src = `../web/site.html?page=${page}&theme=${theme}`;
+phone.src = `../web/site.html?page=${page}&theme=${theme}${extra ? "&" + extra : ""}`;
+const notes = {
+  home: `<b>Featured</b> isn’t drawn: it stays hidden until we pick the first plugin, then sits above New as a row of up to three cards. Search runs in the browser over the whole index; typing replaces the sections with results, filtered by the chosen category. The phone header folds search and the menu into two icons.`,
+  plugin: `Desktop: a restricted plugin that asks for a folder, with a revoked version in its history. Phone: an unrestricted plugin (Perspective Kit), whose box turns into one red warning. The README and changelogs come from the package and the GitHub release notes. “Install in HikariSub” opens <code>hikarisub://plugin/install?id=…</code>; HikariSub then shows its own confirmation.`,
+  author: `Everything here comes from the listing files: the handle, the GitHub link and the pinned key. No accounts, no avatars stored by us (a monogram, or the GitHub avatar fetched at build time).`,
+  submit: `The page is the short version; it links PL9’s authoring guide on hikarisub.org for the details.`,
+}[page];
+document.getElementById("notes").innerHTML = notes;
+let loaded = 0;
+function fit() {
+  const dh = desk.contentDocument.documentElement.scrollHeight;
+  desk.style.height = dh + "px";
+  const ph = phone.contentDocument.documentElement.scrollHeight;
+  phone.style.height = Math.min(ph, Math.max(dh, 1500)) + "px";
+  document.body.dataset.ready = "1";
+}
+for (const f of [desk, phone]) f.addEventListener("load", () => { if (++loaded === 2) document.fonts.ready.then(() => setTimeout(fit, 150)); });
+</script>
+</body>
+</html>

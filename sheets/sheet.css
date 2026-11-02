@@ -1,0 +1,13 @@
+@font-face { font-family: "IBM Plex Sans"; font-weight: 400; src: url(../fonts/ibm-plex-sans-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 600; src: url(../fonts/ibm-plex-sans-latin-600-normal.woff2) format("woff2"); }
+html { background: #dfe3e6; color: #202832; }
+html[data-theme="dark"], html[data-theme="hcb"] { background: #0d0f12; color: #e8edf2; }
+body { margin: 0; padding: 28px 32px 32px; font: 14px/1.5 "IBM Plex Sans", "Noto Sans", sans-serif; width: max-content; }
+h1 { font-size: 22px; font-weight: 600; margin: 0 0 18px; }
+.frames { display: flex; gap: 32px; align-items: flex-start; }
+figure { margin: 0; }
+figcaption { font-weight: 600; font-size: 13px; margin-bottom: 8px; opacity: .75; }
+iframe { display: block; border: 0; border-radius: 10px; box-shadow: 0 0 0 1px rgb(0 0 0 / .12), 0 8px 30px rgb(0 0 0 / .12); background: #fff; }
+.notes { margin-top: 20px; max-width: 1280px; padding: 12px 16px; border-left: 3px solid #145c4c; background: rgb(255 255 255 / .6); }
+html[data-theme="dark"] .notes, html[data-theme="hcb"] .notes { background: rgb(255 255 255 / .05); border-left-color: #9cdbc9; }
+code { font-size: 12.5px; }
