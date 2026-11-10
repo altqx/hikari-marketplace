@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  // The workers.dev preview. No routes and no custom domain until the PL6 release.
+  // The top level is the workers.dev preview; env.production is marketplace.hikarisub.org.
   "name": "hikari-marketplace-preview",
   "main": "src/worker.ts",
   "compatibility_date": "2026-10-01",
@@ -13,5 +13,16 @@
     "not_found_handling": "404-page",
     "run_worker_first": ["/p/*", "/index.json*"]
   },
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  "env": {
+    // Deployed only by .github/workflows/deploy-production.yml, from main, by hand.
+    "production": {
+      "name": "hikari-marketplace",
+      "workers_dev": false,
+      "preview_urls": false,
+      "routes": [{ "pattern": "marketplace.hikarisub.org", "custom_domain": true }],
+      // hikari-plugins' Publish uploads the signed index and the packages here.
+      "r2_buckets": [{ "binding": "PACKAGES", "bucket_name": "hikari-marketplace" }]
+    }
+  }
 }

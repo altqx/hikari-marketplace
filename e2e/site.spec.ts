@@ -151,4 +151,5 @@ test("security headers", async ({ request }) => {
   const res = await request.get("/");
   expect(res.headers()["content-security-policy"]).toContain("script-src 'self'");
   expect(res.headers()["x-content-type-options"]).toBe("nosniff");
+  expect(res.headers()["x-robots-tag"]).toBeUndefined();
 });

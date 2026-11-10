@@ -1,0 +1,48 @@
+name: Deploy production
+
+# marketplace.hikarisub.org, deployed by hand from main once the owner says the marketplace goes live.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    environment:
+      name: production
+      url: https://marketplace.hikarisub.org
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - run: bun install --frozen-lockfile
+      - name: Fetch the signed index from R2
+        run: |
+          mkdir -p out/index
+          for f in index.json index.json.minisig; do
+            bunx wrangler r2 object get "hikari-marketplace/$f" --remote --file "out/index/$f"
+          done
+      - run: bun scripts/verify-index.ts out/index
+      - run: bun run build
+        env:
+          INDEX_DIR: out/index
+      - run: bunx wrangler deploy --env production
+      # A new custom domain takes a few minutes to get its certificate.
+      - name: Verify the live site
+        run: |
+          for attempt in $(seq 1 20); do
+            bun scripts/verify-live.ts https://marketplace.hikarisub.org out/index/index.json && exit 0
+            sleep 30
+          done
+          exit 1
