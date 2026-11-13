@@ -8,7 +8,7 @@
   --bg: hsl(0 0% 96%); --fg: hsl(0 0% 3.9%); --muted: hsl(0 0% 96.1%); --muted-fg: hsl(0 0% 45.1%);
   --card: hsl(0 0% 94.7%); --popover: hsl(0 0% 98%); --border: hsla(0 0% 80% / 50%);
   --primary: #145c4c; --primary-fg: #fff; --secondary: hsl(0 0% 93.1%); --accent: hsla(0 0% 82% / 50%);
-  --warn: #8a5a00; --warn-bg: #f6ecd6; --danger: #a51f31; --danger-bg: #f6dcdf; --ok: #145c4c;
+  --warn: #8a5a00; --warn-bg: #f6ecd6; --danger: #a51f31; --danger-bg: #f6dcdf; --ok: #145c4c; --ok-bg: #dcefe8;
   --shadow: 0 1px 2px rgb(0 0 0 / .04), 0 8px 24px rgb(0 0 0 / .06);
   color-scheme: light;
 }
@@ -16,7 +16,7 @@
   --bg: hsl(0 0% 7.04%); --fg: hsl(0 0% 92%); --muted: hsl(0 0% 12.9%); --muted-fg: hsla(0 0% 70% / .8);
   --card: hsl(0 0% 9.8%); --popover: hsl(0 0% 11.6%); --border: hsla(0 0% 40% / 20%);
   --primary: #9cdbc9; --primary-fg: #0b2620; --secondary: hsl(0 0% 12.9%); --accent: hsla(0 0% 40.9% / 30%);
-  --warn: #e0b060; --warn-bg: #2e2516; --danger: #ffadad; --danger-bg: #3a1c1f; --ok: #9cdbc9;
+  --warn: #e0b060; --warn-bg: #2e2516; --danger: #ffadad; --danger-bg: #3a1c1f; --ok: #9cdbc9; --ok-bg: #16302a;
   --shadow: none;
   color-scheme: dark;
 }
@@ -91,6 +91,9 @@ footer .grow { flex: 1; }
 .badge.warn { background: var(--warn-bg); color: var(--warn); }
 .badge.danger { background: var(--danger-bg); color: var(--danger); }
 .badge.plain { border: 1px solid var(--border); color: var(--muted-fg); }
+.badge.official { background: var(--ok-bg); color: var(--ok); }
+svg.om { stroke-width: 1; }
+svg.om .star { fill: currentColor; stroke: none; }
 .badge svg.i { width: 12px; height: 12px; }
 
 /* Plugin page */
@@ -226,7 +229,7 @@ img.picon { border-radius: 22%; }
 .picon.blank[data-size="72"] svg.i { width: 32px; height: 32px; }
 .card:hover, .row:hover { border-color: color-mix(in srgb, var(--primary) 40%, var(--border)); }
 .rows .row:hover { background: var(--accent); }
-.card .meta .end { margin-left: auto; }
+.card .meta .end { margin-left: auto; display: flex; gap: 6px; }
 .chip:hover { border-color: var(--primary); }
 .section.first { margin-top: 20px; }
 .section-head h1 { font-size: 30px; font-weight: 600; margin: 0; letter-spacing: -.015em; }
