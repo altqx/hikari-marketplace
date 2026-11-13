@@ -24,7 +24,8 @@ bunx wrangler dev    # http://127.0.0.1:8787
   always sent with a sandboxing CSP. The preview has no bucket bound.
 - CI deploys the preview from `main` with the `CLOUDFLARE_API_TOKEN` secret and the `CLOUDFLARE_ACCOUNT_ID`
   variable, building with `NOINDEX=1`.
-- `deploy-production.yml` deploys `env.production` by hand from `main`, in the `production` environment:
+- `deploy-production.yml` deploys `env.production` from `main`, in the `production` environment. It runs by hand,
+  or on the `index-published` dispatch that hikari-plugins' Publish sends when it uploads a new index:
   1. It fetches `index.json` and its `.minisig` from the `hikari-marketplace` R2 bucket.
   2. It checks them against `keys/marketplace.pub` (EF622DD4D472E463), then builds from them.
   3. After the deploy, `scripts/verify-live.ts` checks that the live index verifies, that it's the one the site was

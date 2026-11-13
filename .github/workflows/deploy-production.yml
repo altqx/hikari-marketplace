@@ -1,8 +1,10 @@
 name: Deploy production
 
-# marketplace.hikarisub.org, deployed by hand from main once the owner says the marketplace goes live.
+# marketplace.hikarisub.org: by hand, or when hikari-plugins' Publish uploads a new signed index.
 on:
   workflow_dispatch:
+  repository_dispatch:
+    types: [index-published]
 
 permissions:
   contents: read
