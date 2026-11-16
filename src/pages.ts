@@ -1,7 +1,7 @@
 import { html, type Raw, raw } from "./html.ts";
 import {
   appVersion, CATEGORIES, firstPublished, type Index, installUrl, keyId, latest, LISTINGS_REPO, listed, local, longDate,
-  type Plugin, permLines, reportUrl, size, slug, type Version,
+  official, type Plugin, permLines, reportUrl, size, slug, type Version,
 } from "./model.ts";
 
 export interface Site {
@@ -79,6 +79,8 @@ function page(title: string, on: string, body: Raw, description = "Plugins for H
 `.value;
 }
 
+const OFFICIAL_MARK = raw('<svg class="i om" viewBox="0 0 16 16" aria-hidden="true"><path d="M8.5 13.5h-6v-9h3a1.5 1.5 0 1 1 3 0h3v4"/><path class="star" d="M12 8.5l.75 2.75 2.75.75-2.75.75-.75 2.75-.75-2.75-2.75-.75 2.75-.75z"/></svg>');
+const officialBadge = (p: Plugin) => (official(p) ? html`<span class="badge official">${OFFICIAL_MARK}By HikariSub</span>` : "");
 const tierBadge = (v: Version) => (v.tier === "unrestricted" ? html`<span class="badge warn">${ic("alert")}Unrestricted</span>` : "");
 const downloads = (site: Site, p: Plugin) => {
   const n = site.downloads[p.id];
@@ -89,12 +91,12 @@ function card(site: Site, p: Plugin, by = true) {
   const v = latest(p) as Version;
   return html`<a class="card" href="${pluginHref(p)}"><div class="top">${pluginIcon(p, v, 44)}<div><div class="name">${v.name}</div>${by ? html`<div class="by">${p.authorName}</div>` : ""}</div></div>
   <p class="sum">${v.summary}</p>
-  <div class="meta"><span>${p.categories[0]}</span>${downloads(site, p)}${v.tier === "unrestricted" ? html`<span class="end">${tierBadge(v)}</span>` : ""}</div></a>`;
+  <div class="meta"><span>${p.categories[0]}</span>${downloads(site, p)}${official(p) || v.tier === "unrestricted" ? html`<span class="end">${officialBadge(p)}${tierBadge(v)}</span>` : ""}</div></a>`;
 }
 
 function row(p: Plugin, side: string) {
   const v = latest(p) as Version;
-  return html`<a class="row" href="${pluginHref(p)}">${pluginIcon(p, v, 36)}<div class="txt"><div class="name">${v.name} ${tierBadge(v)}</div><div class="sum">${v.summary}</div></div>
+  return html`<a class="row" href="${pluginHref(p)}">${pluginIcon(p, v, 36)}<div class="txt"><div class="name">${v.name} ${officialBadge(p)}${tierBadge(v)}</div><div class="sum">${v.summary}</div></div>
   <div class="side">${side}</div></a>`;
 }
 
@@ -189,7 +191,7 @@ export function plugin(site: Site, p: Plugin) {
   const perms = pulled ? "" : permBox(v);
   return page(`${v.name} · HikariSub Marketplace`, "plugin", html`
     <div class="crumbs"><a href="/">Plugins</a><span>›</span><a href="${categoryHref(p.categories[0] as string)}">${p.categories[0]}</a></div>
-    <section class="phead">${pluginIcon(p, v, 72)}<div><h1>${v.name} ${pulled ? html`<span class="badge danger">Revoked</span>` : v.tier === "unrestricted" ? tierBadge(v) : html`<span class="badge plain">Restricted</span>`}</h1>
+    <section class="phead">${pluginIcon(p, v, 72)}<div><h1>${v.name} ${pulled ? html`<span class="badge danger">Revoked</span>` : v.tier === "unrestricted" ? tierBadge(v) : html`<span class="badge plain">Restricted</span>`}${pulled ? "" : html` ${officialBadge(p)}`}</h1>
       <div class="by">by <a href="${authorHref(p.author)}">${p.authorName}</a></div><p class="sum">${v.summary}</p></div>
       ${install}</section>
     ${perms ? html`<div class="phone-perms">${perms}</div>` : ""}

@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { keyId, latest, local, longDate, type Plugin, permLines, size, slug, type Version } from "./model.ts";
+import { keyId, latest, local, longDate, OFFICIAL_KEY, official, type Plugin, permLines, size, slug, type Version } from "./model.ts";
 
 const version = (v: Partial<Version>): Version => ({
   version: "1.0.0", api: 1, tier: "restricted", name: "X", summary: "", license: "MIT", authors: [], permissions: {},
@@ -37,4 +37,13 @@ test("permission lines", () => {
     "Asks you to pick a folder: “Out”, and writes there", "Reads and edits every open document",
   ]);
   expect(permLines(version({}))).toEqual([]);
+});
+
+test("only the hikarisub handle with HikariSub's own key is official", () => {
+  const p = (id: string, author: string, publicKey: string) => ({ id, author, publicKey }) as Plugin;
+  expect(keyId(OFFICIAL_KEY)).toBe("C399EBCEA48BCB30");
+  expect(official(p("hikarisub.macro-chains", "hikarisub", OFFICIAL_KEY))).toBe(true);
+  expect(official(p("hikarisub.macro-chains", "hikarisub", "RWSZidnvIHp8qW7ynpUV8iDc/FH3riGpLuA+tz6zSeqwE3Q9Y+jmY5TH"))).toBe(false);
+  expect(official(p("hikari-sub.macro-chains", "hikari-sub", OFFICIAL_KEY))).toBe(false);
+  expect(official(p("hikarisubs.macro-chains", "hikarisub", OFFICIAL_KEY))).toBe(false);
 });

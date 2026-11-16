@@ -1,5 +1,6 @@
 import { expect, test } from "bun:test";
-import { load } from "./build.ts";
+import { readFileSync } from "node:fs";
+import { load, withNoindex } from "./build.ts";
 import * as pages from "./pages.ts";
 
 const site = await load("fixtures/test-index");
@@ -30,4 +31,12 @@ test("index strings are escaped", () => {
   const out = pages.plugin(site, p);
   expect(out).not.toContain("<img src=x");
   expect(out).not.toContain("<script>alert");
+});
+
+test("only the preview build keeps search engines out", () => {
+  const headers = readFileSync("public/_headers", "utf8");
+  expect(headers).not.toContain("X-Robots-Tag");
+  const preview = withNoindex(headers);
+  expect(preview.split("\n").slice(0, 2)).toEqual(["/*", "  X-Robots-Tag: noindex"]);
+  expect(preview.match(/X-Robots-Tag/g)).toHaveLength(1);
 });

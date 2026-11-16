@@ -2,6 +2,7 @@
 // for the preview and the tests. Every plugin, author and number in it is invented.
 import { copyFileSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { OFFICIAL_KEY } from "../src/model.ts";
 
 const OUT = "fixtures/test-index";
 const BASE = "https://marketplace.hikarisub.org";
@@ -22,6 +23,7 @@ interface Sample {
   revoked?: string;
   versions: { v: string; date: string; notes: string; revoked?: string; perms?: Perms }[];
   readme?: string;
+  glyph?: string;
 }
 
 const net = (hosts: string[], reason: string) => ({ network: { hosts, reason } });
@@ -128,6 +130,12 @@ Track a sign through a shot and turn the motion into tags. Pick the sign’s cor
     versions: [{ v: "1.0.0", date: "2027-01-19", notes: "- First release." }],
   },
   {
+    id: "hikarisub.macro-chains", name: "Macro Chains", authorName: "altqx", hue: 166, cats: ["Utilities"],
+    summary: "Records a run of macros once and replays it as one, with a single merged dialog.", licence: "MIT",
+    glyph: '<g fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17h10M12 24h16M12 31h10"/><path d="M30 13l7 7-7 7"/></g>',
+    versions: [{ v: "1.0.0", date: "2027-01-15", notes: "- First release." }],
+  },
+  {
     id: "rogue.subtitle-sync", name: "Subtitle Sync Cloud", authorName: "Rogue", hue: 0, cats: ["Utilities"],
     summary: "Backs up your subtitles to the cloud.", licence: "MIT",
     revoked: "Uploaded subtitle files to a host its manifest doesn’t declare.",
@@ -139,7 +147,7 @@ Track a sign through a shot and turn the motion into tags. Pick the sign’s cor
 const downloads: Record<string, number> = {
   "mirai.karaoke-flow": 4812, "mirai.romaji-split": 2930, "tsubame.scene-snap": 3104, "tsubame.reading-speed": 3611,
   "nanami.sign-tracker": 2577, "oyster.perspective-kit": 1904, "lumen.draft-translate": 1213, "kaede.font-doctor": 2208,
-  "haru.batch-qc": 84, "haru.line-tools": 5321, "nanami.chapter-export": 21, "rogue.subtitle-sync": 340,
+  "haru.batch-qc": 84, "hikarisub.macro-chains": 1450, "haru.line-tools": 5321, "nanami.chapter-export": 21, "rogue.subtitle-sync": 340,
 };
 
 // Fake but well-formed minisign public keys, one per author.
@@ -152,7 +160,8 @@ const keyFor = (author: string) => {
 
 const icon = (s: Sample) => {
   const glyph = s.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toLowerCase();
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${s.hue} 55% 46%)"/><stop offset="1" stop-color="hsl(${(s.hue + 30) % 360} 60% 32%)"/></linearGradient></defs><rect width="48" height="48" rx="10.5" fill="url(#g)"/><text x="24" y="31" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-weight="600" font-size="19" fill="#fff">${glyph}</text></svg>\n`;
+  const mark = s.glyph ?? `<text x="24" y="31" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-weight="600" font-size="19" fill="#fff">${glyph}</text>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${s.hue} 55% 46%)"/><stop offset="1" stop-color="hsl(${(s.hue + 30) % 360} 60% 32%)"/></linearGradient></defs><rect width="48" height="48" rx="10.5" fill="url(#g)"/>${mark}</svg>\n`;
 };
 
 const captions = ["The preset panel next to the video.", "The tracked corners on a station sign.", "A karaoke line over the audio."];
@@ -185,7 +194,7 @@ const plugins = samples.map((s) => {
   });
   return {
     id: s.id, author, authorName: s.authorName, repo: `https://github.com/${author}/${s.id.split(".")[1]}`,
-    publicKey: keyFor(author), categories: s.cats, ...(s.revoked ? { revoked: { reason: s.revoked, date: "2027-01-20" } } : {}),
+    publicKey: author === "hikarisub" ? OFFICIAL_KEY : keyFor(author), categories: s.cats, ...(s.revoked ? { revoked: { reason: s.revoked, date: "2027-01-20" } } : {}),
     versions,
   };
 });

@@ -6,6 +6,7 @@ import { BASE_URL, CATEGORIES, type Index, latest, listed, local, parseIndex, sl
 import * as pages from "./pages.ts";
 
 const SOURCE = process.env.INDEX_DIR ?? "fixtures/test-index";
+const NOINDEX = process.env.NOINDEX === "1";
 const OUT = "dist";
 
 async function text(url: string) {
@@ -30,6 +31,9 @@ export async function load(source: string): Promise<pages.Site> {
   return { index, downloads, readmes, changelogs };
 }
 
+/** The workers.dev preview stays out of search engines; marketplace.hikarisub.org doesn't. */
+export const withNoindex = (headers: string) => headers.replace(/^\/\*\n/m, "/*\n  X-Robots-Tag: noindex\n");
+
 function write(path: string, body: string) {
   const file = join(OUT, path);
   mkdirSync(dirname(file), { recursive: true });
@@ -40,6 +44,7 @@ if (import.meta.main) {
   const site = await load(SOURCE);
   rmSync(OUT, { recursive: true, force: true });
   cpSync("public", OUT, { recursive: true });
+  if (NOINDEX) writeFileSync(join(OUT, "_headers"), withNoindex(readFileSync(join(OUT, "_headers"), "utf8")));
   if (existsSync(join(SOURCE, "p"))) {
     cpSync(join(SOURCE, "p"), join(OUT, "p"), { recursive: true, filter: (src) => !src.endsWith(".hikariplugin") });
   }

@@ -1,6 +1,9 @@
 // The registry's index.json (hikari-plugins/schemas/index.schema.json), and what the pages derive from it.
 export const BASE_URL = "https://marketplace.hikarisub.org";
 export const LISTINGS_REPO = "https://github.com/altqx/hikari-plugins";
+export const OFFICIAL_HANDLE = "hikarisub";
+// hikari-plugins keys/hikarisub.pub (C399EBCEA48BCB30): HikariSub's own author key.
+export const OFFICIAL_KEY = "RWQwy4ukzuuZw1Rmfuf/pEwiEwWJhmXWHE8xGwRY6bWV/DRGBz3PbmYK";
 
 export interface Revocation {
   reason: string;
@@ -133,3 +136,6 @@ export function reportUrl(p: Plugin, v: Version | undefined) {
 }
 
 export const installUrl = (p: Plugin) => `hikarisub://plugin/install?id=${encodeURIComponent(p.id)}`;
+
+export const official = (p: Plugin) =>
+  p.author === OFFICIAL_HANDLE && p.id.startsWith(`${OFFICIAL_HANDLE}.`) && p.publicKey === OFFICIAL_KEY;

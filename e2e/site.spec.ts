@@ -60,7 +60,7 @@ test("categories", async ({ page }) => {
   await page.goto("/categories/translation");
   await expect(page.locator(".card")).toHaveCount(1);
   await page.goto("/plugins");
-  await expect(page.locator(".card")).toHaveCount(11);
+  await expect(page.locator(".card")).toHaveCount(12);
 });
 
 test("a plugin page", async ({ page }) => {
@@ -95,6 +95,17 @@ test("a plugin page", async ({ page }) => {
   await expect(carousel.locator(".pos")).toHaveText("2 of 3");
   const shot = await page.request.get("/p/nanami.sign-tracker/0.9.4/screenshot-1.png");
   expect(shot.headers()["content-security-policy"]).toContain("sandbox");
+});
+
+test("HikariSub's own plugins carry the badge, and only they do", async ({ page }) => {
+  await page.goto("/plugins/hikarisub.macro-chains");
+  await expect(page.locator("h1 .badge.official")).toHaveText("By HikariSub");
+  await expect(page.locator(".phead .by")).toHaveText("by altqx");
+  await page.goto("/categories/utilities");
+  await expect(page.locator(".card", { hasText: "Macro Chains" }).locator(".badge.official")).toHaveText("By HikariSub");
+  await expect(page.locator(".card .badge.official")).toHaveCount(1);
+  await page.goto("/plugins/haru.line-tools");
+  await expect(page.locator(".badge.official")).toHaveCount(0);
 });
 
 test("unrestricted, network and plain plugins", async ({ page }) => {
@@ -151,4 +162,5 @@ test("security headers", async ({ request }) => {
   const res = await request.get("/");
   expect(res.headers()["content-security-policy"]).toContain("script-src 'self'");
   expect(res.headers()["x-content-type-options"]).toBe("nosniff");
+  expect(res.headers()["x-robots-tag"]).toBeUndefined();
 });
