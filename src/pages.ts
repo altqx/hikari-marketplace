@@ -1,6 +1,6 @@
 import { html, type Raw, raw } from "./html.ts";
 import {
-  appVersion, CATEGORIES, firstPublished, type Index, installUrl, keyId, latest, LISTINGS_REPO, listed, local, longDate,
+  CATEGORIES, firstPublished, type Index, installUrl, keyId, latest, LISTINGS_REPO, listed, local, longDate,
   official, type Plugin, permLines, reportUrl, size, slug, type Version,
 } from "./model.ts";
 
@@ -177,14 +177,13 @@ function history(site: Site, p: Plugin) {
 export function plugin(site: Site, p: Plugin) {
   const good = latest(p);
   const v = good ?? (p.versions[0] as Version);
-  const app = appVersion(site.index, v.api);
   const pulled = p.revoked ?? (good ? undefined : { reason: "Every version has been revoked." });
   const install = pulled
     ? html`<div class="install"><div class="box danger revoked-box"><b>Removed from the marketplace</b><span>${pulled.reason}</span>${pulled.date ? html`<span class="d">${longDate(pulled.date)}</span>` : ""}</div></div>`
     : html`<div class="install"><a class="btn primary" href="${installUrl(p)}">${ic("plug")}Install in HikariSub</a><a class="btn secondary" href="${local(v.url)}" download>${ic("download")}Download .hikariplugin</a>
-      <div class="note">${app ? `Needs HikariSub ${app} or later.` : `Needs Hikari API ${v.api}.`} <a href="${HIKARISUB}">Get HikariSub</a></div></div>`;
+      <div class="note"><a href="${HIKARISUB}">Get HikariSub</a></div></div>`;
   const facts = html`<div class="box"><h2>Details</h2><dl class="facts">
-    <dt>Version</dt><dd>${v.version}</dd><dt>Updated</dt><dd>${longDate(v.published)}</dd>${app ? html`<dt>Needs</dt><dd>HikariSub ${app} or later</dd>` : ""}
+    <dt>Version</dt><dd>${v.version}</dd><dt>Updated</dt><dd>${longDate(v.published)}</dd>
     <dt>Hikari API</dt><dd>${v.api}</dd>${site.downloads[p.id] !== undefined ? html`<dt>Downloads</dt><dd>${(site.downloads[p.id] as number).toLocaleString("en-GB")}</dd>` : ""}<dt>Size</dt><dd>${size(v.size)}</dd>
     <dt>Licence</dt><dd>${v.license}</dd><dt>Categories</dt><dd>${p.categories.map((c, i) => html`${i ? ", " : ""}<a href="${categoryHref(c)}">${c}</a>`)}</dd></dl></div>
     <div class="box links"><a href="${p.repo}">${ic("code")}Source code</a>${v.homepage ? html`<a href="${v.homepage}">${ic("globe")}Homepage</a>` : ""}<span class="keyline" title="${p.publicKey}">${ic("key")}Signing key <span class="mono">${keyId(p.publicKey)}</span></span><a href="${reportUrl(p, good)}">${ic("flag")}Report a problem</a></div>`;

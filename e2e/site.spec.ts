@@ -68,7 +68,7 @@ test("a plugin page", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Sign Tracker");
   await expect(page.getByRole("link", { name: "Install in HikariSub" })).toHaveAttribute("href", "hikarisub://plugin/install?id=nanami.sign-tracker");
   await expect(page.getByRole("link", { name: "Download .hikariplugin" })).toHaveAttribute("href", "/p/nanami.sign-tracker/0.9.4.hikariplugin");
-  await expect(page.locator(".install .note")).toContainText("Needs HikariSub 0.2.0 or later.");
+  await expect(page.locator(".install .note")).not.toContainText("Needs");
   await expect(page.locator(".desk-perms")).toContainText("Asks you to pick a folder: “Tracking data folder”, and writes there");
   await expect(page.locator(".ver.revoked")).toHaveCount(1);
   await expect(page.locator(".ver.revoked .why")).toHaveText("Revoked: Crashed the plugin helper on variable-frame-rate video.");

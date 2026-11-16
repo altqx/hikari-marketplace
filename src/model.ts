@@ -88,7 +88,6 @@ export function keyId(publicKey: string) {
   return [...bytes].reverse().map((b) => b.toString(16).padStart(2, "0")).join("").toUpperCase();
 }
 
-export const appVersion = (index: Index, api: number) => index.apiVersions[String(api)];
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
   "November", "December"];
