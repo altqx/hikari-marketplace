@@ -36,6 +36,12 @@ jobs:
             bunx wrangler r2 object get "hikari-marketplace/$f" --remote --file "out/index/$f"
           done
       - run: bun scripts/verify-index.ts out/index
+      - name: Fetch the READMEs from R2
+        run: |
+          for key in $(bun -e 'import { readFileSync } from "node:fs"; import { latest, local, parseIndex } from "./src/model.ts"; for (const p of parseIndex(readFileSync("out/index/index.json", "utf8")).plugins) { const v = latest(p); if (v && !p.revoked) console.log(local(v.readme).slice(1)); }'); do
+            mkdir -p "out/index/$(dirname "$key")"
+            bunx wrangler r2 object get "hikari-marketplace/$key" --remote --file "out/index/$key"
+          done
       - run: bun run build
         env:
           INDEX_DIR: out/index
